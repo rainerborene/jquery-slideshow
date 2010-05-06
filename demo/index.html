@@ -3,36 +3,21 @@
 <head>
 	<meta charset="utf-8"/>
 	<title>jQuery Slideshow Demo</title>
-	<style>
-		body {
-			font-family: 'Helvetica Neue', Helvetica, arial, sans-serif;
-			background: url(noise.jpg) repeat left top;
-		}
-
-		#container {
-			margin:25px;
-		}
-
-		h1 {
-			margin:0px;
-			font-weight:normal;
-			font-size:26px;
-			color:#fff;
-		}
-
-		p {
-			color:#888;
-			font-size:13px;
-			text-shadow:0px 1px 0px rgba(255, 255, 255, 0.2);
-		}
-	</style>
+	<link rel="stylesheet" href="demo.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../src/jquery.slideshow.css" type="text/css" media="screen" />
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-	<script src="src/jquery.slideshow.js"></script>
+	<script src="../src/jquery.slideshow.js"></script>
+	<script src="demo.js"></script>
 </head>
 <body>
 	<div id="container">
-		<form action="" method="post">
-		</form>
+		<div id="search">
+			<input type="text" class="text" name="query" />
+			<input type="button" id="submit" value="Search" />
+		</div>
+
+		<div id="photos">
+		</div>
 	</div>
 </body>
 </html>
