@@ -117,8 +117,6 @@
 		load: function(element){
 			var original = $(element).attr("href"), img = $(element).find("img").clone(), src = img.attr("src");
 
-			img.removeAttr("width");
-			img.removeAttr("height");
 			img.data('original', original);
 
 			if (settings.expressions.src){
