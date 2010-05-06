@@ -4,7 +4,7 @@
  * Copyright 2010, Rainer Borene, João Otávio
  * Licensed under the MIT License
  *
- * Date: 2010-04-23
+ * Date: 2010-05-06
  */
 (function($){
 
@@ -29,18 +29,17 @@
 	var $nextButton = $("<a/>").addClass("nextButton");
 
 	var settings = {
+		closeDuration: "fast",
 		expressions: {
-			src: [/_t\.jpg$/, "_s.jpg"]
+			src: [/_t\.jpg$/, "_s.jpg"],
+			selected: [/_[A-Za-z]+\./, '.']
 		}
 	};
 
 	$.slideshow = {
-		version: "0.1",
-		initialized: false,
+		version: "0.2",
 
 		initialize: function(){
-			if ($.slideshow.initialized === true) return this;
-
 			$slideshowContainer.prependTo(document.body);
 			$slideshowOverlay.prependTo($slideshowContainer);
 
@@ -74,7 +73,6 @@
 			});
 
 			$.slideshow.initializeEvents();
-			$.slideshow.initialized = true;
 		},
 
 		initializeEvents: function(){
@@ -93,7 +91,7 @@
 			$("#items img").live("click", function(){
 				var self = $(this);
 
-				$("#items img[class='selected']").removeClass("selected");
+				$("#items img.selected").removeClass("selected");
 				self.addClass("selected");
 
 				$imageContainer.addClass("loading");
@@ -101,17 +99,15 @@
 				$image.fadeOut("slow", function(){
 					var image = new Image();
 					image.onload = function(){
+						$image.data("meta", {width: this.width, height: this.height});
 						$image.attr("src", image.src);
 
-						var distance = $thumbnailsContainer.outerHeight() + parseInt($thumbnailsContainer.css("bottom")),
-							top = ($(window).height() - $image.height() - distance) / 2;
-
-						$image.css("top", Math.max(top, 0));
+						$.slideshow.resize();
 						$imageContainer.removeClass("loading");
 						$image.fadeIn("slow");
 					};
 
-					image.src = self.data('realsize');
+					image.src = self.data('original');
 				});
 			});
 
@@ -119,11 +115,11 @@
 		},
 
 		load: function(element){
-			var original = $(element).attr("href"),
-				img = $(element).find("img").clone(),
-				src = img.attr("src");
+			var original = $(element).attr("href"), img = $(element).find("img").clone(), src = img.attr("src");
 
-			img.data('realsize', original);
+			img.removeAttr("width");
+			img.removeAttr("height");
+			img.data('original', original);
 
 			if (settings.expressions.src){
 				src = src.replace(settings.expressions.src[0], settings.expressions.src[1]);
@@ -133,8 +129,7 @@
 		},
 
 		adjust: function(){
-			var width = ($("#items img").length * (75 + 13)) - 7;
-
+			var width = ($items.find("img").length * (75 + 13)) - 7;
 			$items.css("width", width + "px");
 			$items.find("img:last").css("margin-right", "0px");
 		},
@@ -146,17 +141,20 @@
 			$.slideshow.resize();
 
 			if (image !== "undefined"){
-				$items.find("img[class='selected']").removeClass("selected");
+				$imageContainer.addClass("loading");
+				$items.find("img.selected").removeClass("selected");
 				$items.find("img").filter(function(){
-					if (this.src.replace(/_[A-Za-z]+\./, '.') === image){
+					if (this.src.replace(settings.expressions.selected[0], settings.expressions.selected[1]) === image){
 						return this;
 					}
 				}).addClass("selected");
 
 				var preload = new Image();
 				preload.onload = function(){
+					$image.data("meta", {width: this.width, height: this.height});
 					$image.attr("src", preload.src);
 					$image.css("visibility", "visible");
+					$imageContainer.removeClass("loading");
 					$.slideshow.resize();
 				};
 
@@ -167,18 +165,42 @@
 		},
 
 		close: function(){
-			return $slideshowContainer.fadeOut("slow", function(){
+			return $slideshowContainer.fadeOut(settings.closeDuration, function(){
 				$image.css("visibility", "hidden");
 				$(document.body).css("overflow", "visible");
 			});
 		},
 
-		resize: function(){
-			var width = $(document.body).innerWidth() - 60 - 95,
-				distance = $thumbnailsContainer.outerHeight() + parseInt($thumbnailsContainer.css("bottom")),
-				topPosition = ($(window).height() - $image.height() - distance) / 2;
+		// Thanks to http://www.ajaxblender.com/howto-resize-image-proportionally-using-javascript.html
+		scaleSize: function(maxW, maxH, currW, currH){
+			var ratio = currH / currW;
 
-			$image.css("top", Math.max(topPosition, 0));
+			if (currH >= maxH){
+				currH = maxH;
+				currW = currH / ratio;
+			}
+
+			return {
+				width: currW,
+				height: currH
+			};
+		},
+
+		resize: function(){
+			var width = $(document.body).innerWidth() - 60 - 95, distance = $thumbnailsContainer.outerHeight() + parseInt($thumbnailsContainer.css("bottom")), meta = $image.data("meta");
+
+			if (meta !== null){
+				size = $.slideshow.scaleSize($(window).width(), $(window).height() - distance, meta.width, meta.height);
+
+				$image.css({
+					width: size.width,
+					height: size.height
+				});
+
+				var position = ($(window).height() - $image.height() - distance) / 2;
+				$image.css("top", Math.max(position, 0));				
+			}
+
 			$thumbnails.css("width", width);
 		}
 	};
@@ -186,14 +208,11 @@
 	$.fn.slideshow = function(options){
 		$.extend(settings, options);
 
-		$.slideshow.initialize();
-
 		this.each(function(){
 			$.slideshow.load(this);
 
 			$(this).click(function(){
 				$.slideshow.open(this.href);
-
 				return false;
 			});
 		});
@@ -203,8 +222,6 @@
 		return this;
 	};
 
-})(jQuery);
+	jQuery($.slideshow.initialize);
 
-$(document).ready(function(){
-	$(".slideshow").slideshow();
-});
+})(jQuery);
