@@ -4,7 +4,7 @@
  * Copyright 2010, Rainer Borene, João Otávio
  * Licensed under the MIT License
  *
- * Date: 2010-05-06
+ * Date: 2010-05-07
  */
 (function($){
 
@@ -37,7 +37,7 @@
 	};
 
 	$.slideshow = {
-		version: "0.2",
+		version: "0.2.1",
 
 		initialize: function(){
 			$slideshowContainer.prependTo(document.body);
@@ -56,9 +56,9 @@
 
 			$logo.prependTo($slideshowContainer);
 
-			// Internet Explorer transparency fix
+			// Internet Explorer 6 transparency fix
 			if (jQuery.browser.msie && parseInt(jQuery.browser.version, 10) < 7 && parseInt(jQuery.browser.version, 10) > 4){
-				$(".closeButton, .previousButton, .nextButton").each(function(){
+				$(".closeButton, .previousButton, .nextButton, .slideshowLogo").each(function(){
 					var self = jQuery(this), src = self.css("background-image").match(/^url\("([^'"]+)"\)/i)[1];
 					self.css("filter", "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + src + "', sizingMethod='crop')").addClass("png");
 				});
@@ -79,16 +79,26 @@
 			$closeButton.click($.slideshow.close);
 
 			$(document).keydown(function(event){
+				var selected = $("div#items img.selected");
+
 				if (event.keyCode == '27'){
 					$.slideshow.close();
 				} else if (event.keyCode == '37'){
 					$thumbnails.stop().animate({scrollLeft: "-=87"});
+
+					if (selected.prev("img").length){
+						selected.removeClass("selected").prev("img").addClass("selected").trigger("click");
+					}
 				} else if (event.keyCode == '39'){
 					$thumbnails.stop().animate({scrollLeft: "+=87"});
+
+					if (selected.next("img").length){
+						selected.removeClass("selected").next("img").addClass("selected").trigger("click");
+					}
 				}
 			});
 
-			$("#items img").live("click", function(){
+			$("div#items").delegate("img", "click", function(){
 				var self = $(this);
 
 				$("#items img.selected").removeClass("selected");
@@ -97,17 +107,17 @@
 				$imageContainer.addClass("loading");
 
 				$image.fadeOut("slow", function(){
-					var image = new Image();
-					image.onload = function(){
+					var resource = new Image();
+					resource.onload = function(){
 						$image.data("meta", {width: this.width, height: this.height});
-						$image.attr("src", image.src);
+						$image.attr("src", this.src);
 
 						$.slideshow.resize();
 						$imageContainer.removeClass("loading");
 						$image.fadeIn("slow");
 					};
 
-					image.src = self.data('original');
+					resource.src = self.data('original');
 				});
 			});
 
@@ -133,9 +143,9 @@
 		},
 
 		open: function(image){
-			$(document.body).css("overflow", "hidden");
+			$("html").css("overflow", "hidden");
 
-			// Unfortunately, we had to call this function twice :(
+			// Unfortunately, we need to call this function twice :(
 			$.slideshow.resize();
 
 			if (image !== "undefined"){
@@ -147,16 +157,16 @@
 					}
 				}).addClass("selected");
 
-				var preload = new Image();
-				preload.onload = function(){
+				var resource = new Image();
+				resource.onload = function(){
 					$image.data("meta", {width: this.width, height: this.height});
-					$image.attr("src", preload.src);
+					$image.attr("src", this.src);
 					$image.css("visibility", "visible");
 					$imageContainer.removeClass("loading");
 					$.slideshow.resize();
 				};
 
-				preload.src = image;
+				resource.src = image;
 			}
 
 			$slideshowContainer.css("display", "block");
@@ -165,7 +175,7 @@
 		close: function(){
 			return $slideshowContainer.fadeOut(settings.closeDuration, function(){
 				$image.css("visibility", "hidden");
-				$(document.body).css("overflow", "visible");
+				$("html").css("overflow", "auto");
 			});
 		},
 
@@ -185,21 +195,28 @@
 		},
 
 		resize: function(){
-			var width = $(document.body).innerWidth() - 60 - 95, distance = $thumbnailsContainer.outerHeight() + parseInt($thumbnailsContainer.css("bottom")), meta = $image.data("meta");
+			// image meta information
+			var meta = $image.data("meta");
+
+			// window size object
+			var windowSize = {
+				width: $(window).width(),
+				height: $(window).height()
+			};
 
 			if (meta !== null){
-				size = $.slideshow.scaleSize($(window).width(), $(window).height() - distance, meta.width, meta.height);
+				var distance = $thumbnailsContainer.outerHeight() + parseInt($thumbnailsContainer.css("bottom"));
+				var size = $.slideshow.scaleSize(windowSize.width, (windowSize.height - distance), meta.width, meta.height);
+				var position = (windowSize.height - size.height - distance) / 2;
 
 				$image.css({
 					width: size.width,
-					height: size.height
+					height: size.height,
+					top: Math.max(position, 0)
 				});
-
-				var position = ($(window).height() - $image.height() - distance) / 2;
-				$image.css("top", Math.max(position, 0));				
 			}
 
-			$thumbnails.css("width", width);
+			$thumbnails.css("width", windowSize.width - 60 - 95);
 		}
 	};
 

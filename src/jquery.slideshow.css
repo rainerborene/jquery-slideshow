@@ -9,9 +9,11 @@ img {
 }
 
 #slideshowContainer {
-	_width:100%;
-	_height:100%;
 	display:none;
+	width:100%;
+	height:100%;
+	position:absolute;
+	z-index:10;
 }
 
 #slideshowOverlay {
@@ -19,7 +21,7 @@ img {
 	width:100%;
 	height:100%;
 	background:#000;
-	z-index:2;
+	z-index:11;
 }
 
 #imageContainer {
@@ -27,12 +29,13 @@ img {
 	width:100%;
 	height:100%;
 	text-align:center;
-	z-index:3;
+	z-index:12;
 	-moz-user-select: -moz-none;
 }
 
 #imageContainer img {
 	position:relative;
+	visibility:hidden;
 }
 
 #thumbnailsContainer {
@@ -40,7 +43,7 @@ img {
 	bottom:20px;
 	height:101px;
 	margin:0px 10px;
-	z-index:3;
+	z-index:12;
 }
 
 #thumbnails {
@@ -74,12 +77,12 @@ img {
 
 .slideshowLogo {
 	position:absolute;
-	width: 277px;
+	width: 267px;
 	height: 95px;
-	background: url(../images/logo_slideshow.jpg) no-repeat left top;
+	background: url(../images/logo_slideshow.png) no-repeat left top;
 	left:5px;
 	top:5px;
-	z-index:4;
+	z-index:14;
 }
 
 .closeButton {
@@ -91,7 +94,7 @@ img {
 	background: url(../images/close01.png) no-repeat left top;
 	top:20px;
 	right:20px;
-	z-index:5;
+	z-index:13;
 	outline:0;
 }
 
