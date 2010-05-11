@@ -111,10 +111,12 @@
 			});
 
 			$items.bind("fit", function(){
-				this.width = ($(this).find("img").length * (75 + 13)) - 7;
+				this.width = ($(this).find("img:visible").length * (75 + 13)) - 7;
+
+
 
 				$(this).css("width", this.width + "px");
-				$(this).find("img:last").css("margin-right", "0px");
+				$(this).find("img:visible:last").css("margin-right", "0px");
 
 				return this;
 			});
@@ -127,11 +129,16 @@
 
 			img.data('original', original);
 
+			//console.log(element.rel);
+
 			if (settings.expressions.src){
 				src = src.replace(settings.expressions.src[0], settings.expressions.src[1]);
 			}
 
 			img.attr("src", src).appendTo($items);
+			img.attr("class", element.rel);
+			//console.log(img.parent());
+
 		},
 
 		open: function(image){
@@ -174,18 +181,18 @@
 		prev: function(){
 			var selected = $("div#items img.selected");
 
-			if (selected.prev().length){
+			if (selected.prev(':visible').length){
 				$thumbnails.stop().animate({scrollLeft: "-=87"});
-				selected.removeClass("selected").prev().addClass("selected").trigger("click");
+				selected.removeClass("selected").prev(':visible').addClass("selected").trigger("click");
 			}
 		},
 
 		next: function(){
 			var selected = $("div#items img.selected");
 
-			if (selected.next().length){
+			if (selected.next(':visible').length){
 				$thumbnails.stop().animate({scrollLeft: "+=87"});
-				selected.removeClass("selected").next().addClass("selected").trigger("click");
+				selected.removeClass("selected").next(':visible').addClass("selected").trigger("click");
 			}
 		},
 
@@ -237,12 +244,13 @@
 			$.slideshow._load(this);
 
 			$(this).click(function(){
+				$items.find('img').hide();
+				$items.find('img.'+this.rel).show();
 				$.slideshow.open(this.href);
+				$items.trigger("fit");
 				return false;
 			});
 		});
-
-		$items.trigger("fit");
 
 		return this;
 	};

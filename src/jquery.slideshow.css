@@ -1,33 +1,32 @@
-body, html {
-	width:100%;
-	height:100%;
-}
-
 img {
 	-ms-interpolation-mode: bicubic;
 	image-rendering: optimizeQuality;
 }
 
-#slideshowContainer {
-	display:none;
+.closeButton, .slideshowLogo, #thumbnailsContainer, #slideshowContainer, #slideshowOverlay, #imageContainer {
+	position: absolute;
+}
+
+body, html, #slideshowContainer, #slideshowOverlay, #imageContainer{
 	width:100%;
 	height:100%;
-	position:absolute;
+}
+
+#thumbnails, #thumbnails #items img, .nextButton, .previousButton {
+	float: left;
+}
+
+#slideshowContainer {
+	display:none;
 	z-index:10;
 }
 
 #slideshowOverlay {
-	position:absolute;
-	width:100%;
-	height:100%;
 	background:#000;
 	z-index:11;
 }
 
 #imageContainer {
-	position:absolute;
-	width:100%;
-	height:100%;
 	text-align:center;
 	z-index:12;
 	-moz-user-select: -moz-none;
@@ -39,7 +38,6 @@ img {
 }
 
 #thumbnailsContainer {
-	position:absolute;
 	bottom:20px;
 	height:101px;
 	margin:0px 10px;
@@ -51,7 +49,6 @@ img {
 	background:#000;
 	border: 10px solid black;
 	width: 500px;
-	float: left;
 	-moz-border-radius:5px;
 	-webkit-border-radius:5px;
 }
@@ -68,7 +65,6 @@ img {
 	cursor:pointer;
 	margin-right:7px;
 	border:3px solid #3b3b3b;
-	float: left;
 }
 
 #thumbnails #items img.selected {
@@ -76,7 +72,6 @@ img {
 }
 
 .slideshowLogo {
-	position:absolute;
 	width: 413px;
 	height: 41px;
 	background: url(../images/logo.png) no-repeat left top;
@@ -86,7 +81,6 @@ img {
 }
 
 .closeButton {
-	position: absolute;
 	border:none;
 	cursor: pointer;
 	width: 48px;
@@ -101,13 +95,11 @@ img {
 .nextButton {
 	background: url(../images/arrow_right.png) no-repeat left top;
 	margin-right: 0px;
-	float: left;
 }
 
 .previousButton {
 	background: url(../images/arrow_left.png) no-repeat left top;
 	margin-left: 0px;
-	float: left;
 }
 
 .nextButton, .previousButton {

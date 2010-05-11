@@ -17,13 +17,13 @@ Usage
 It's easy as pie. Just call the `slideshow` function, and be sure you're calling it from a *DOM ready* callback scope.
 
 	$(document).ready(function(){
-		$("a.slideshow").slideshow();
+		$("a[rel=slideshow]").slideshow();
 	});
+
+**ATENTION:** The usage of the *rel* attribute in the links is **obrigatory**!
 
 Known Issues
 ------------
-
-- You can only have one slideshow per page.
 
 License
 -------

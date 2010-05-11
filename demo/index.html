@@ -8,14 +8,14 @@
 		* { margin:0px; padding:0px; border: none; }
 
 		body { font-family: 'Helvetica Neue', Helvetica, arial, sans-serif; background: url(noise.jpg) repeat left top; color:#fff; }
-		h1 { margin:0px; font-weight:normal; font-size:26px; color:#fff; text-shadow:0px 2px 1px #000; margin-bottom:20px; }
+		h1,h2 { margin:0px; font-weight:normal; font-size:26px; color:#fff; text-shadow:0px 2px 1px #000; margin-bottom:20px; }
 
 		div#container { padding:25px; }
 
-		#images a { display:block; width:75px; height:75px; border:3px solid #262626; margin-right:10px; margin-bottom:10px; float:left; }
-		#images a:hover { border-color:#fff; }
-		#images a:last-child { margin-right:0px; }
-		#images a img { display:block; }
+		.images a { display:block; width:75px; height:75px; border:3px solid #262626; margin-right:10px; margin-bottom:10px; float:left; }
+		.images a:hover { border-color:#fff; }
+		.images a:last-child { margin-right:0px; }
+		.images a img { display:block; }
 	</style>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 	<script src="../src/jquery.slideshow.js"></script>
@@ -23,18 +23,33 @@
 		$(document).ready(function(){
 			$.getJSON("http://api.flickr.com/services/feeds/groups_pool.gne?id=35034344814@N01&lang=en-us&format=json&jsoncallback=?", function(data){
 				$.each(data.items, function(i,item){
-					$("<img/>").attr("src", item.media.m.replace(/_m/i, "_s")).appendTo("#images").wrap("<a class=\"slideshow\" href='" + item.media.m.replace(/_m/i, "") + "'></a>");
+					$("<img/>").attr("src", item.media.m.replace(/_m/i, "_s")).appendTo(".images:eq(0)").wrap("<a rel=\"01\" class=\"slideshow\" href='" + item.media.m.replace(/_m/i, "") + "'></a>");
 				});
 
-				$(".slideshow").slideshow();
+				$("a[rel=01]").slideshow();
+			});
+			
+			$.getJSON("http://api.flickr.com/services/feeds/groups_pool.gne?id=618157@N23&lang=en-us&format=json&jsoncallback=?", function(data){
+				$.each(data.items, function(i,item){
+					$("<img/>").attr("src", item.media.m.replace(/_m/i, "_s")).appendTo(".images:eq(1)").wrap("<a rel=\"02\" class=\"slideshow\" href='" + item.media.m.replace(/_m/i, "") + "'></a>");
+				});
+
+				$("a[rel=02]").slideshow();
 			});
 		});
 	</script>
 </head>
 <body>
 	<div id="container">
-		<h1>jQuery Slideshow Plugin</h1>
-		<div id="images"></div>
+		<h1><img src="../images/logo.png" border="0" /></h1>
+		
+		<h2>Gallery 'Dogs'</h2>
+		<div class="images"></div>
+		
+		<br /><br /><br /><br /><br /><br />
+		
+		<h2>Gallery 'Cats'</h2>
+		<div class="images"></div>
 	</div>
 </body>
 </html>
