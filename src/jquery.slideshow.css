@@ -77,11 +77,11 @@ img {
 
 .slideshowLogo {
 	position:absolute;
-	width: 267px;
-	height: 95px;
-	background: url(../images/logo_slideshow.png) no-repeat left top;
-	left:5px;
-	top:5px;
+	width: 413px;
+	height: 41px;
+	background: url(../images/logo.png) no-repeat left top;
+	left:20px;
+	top:25px;
 	z-index:14;
 }
 

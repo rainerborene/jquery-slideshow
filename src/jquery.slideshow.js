@@ -4,29 +4,29 @@
  * Copyright 2010, Rainer Borene, João Otávio
  * Licensed under the MIT License
  *
- * Date: 2010-05-07
+ * Date: 2010-05-11
  */
 (function($){
 
-	var $logo = $("<a/>").attr("class", "slideshowLogo");
+	var $logo = $("<a/>", {class: "slideshowLogo"});
 
 	/* Containers */
-	var $slideshowContainer = $("<div/>").attr("id", "slideshowContainer");
-	var $slideshowOverlay = $("<div/>").attr("id", "slideshowOverlay");
+	var $slideshowContainer = $("<div/>", {id: "slideshowContainer"});
+	var $slideshowOverlay = $("<div/>", {id: "slideshowOverlay"});
 
 	/* Thumbnails */
-	var $thumbnailsContainer = $("<div/>").attr("id", "thumbnailsContainer");
-	var $thumbnails = $("<div/>").attr("id", "thumbnails");
-	var $items = $("<div/>").attr("id", "items");
+	var $thumbnailsContainer = $("<div/>", {id: "thumbnailsContainer"});
+	var $thumbnails = $("<div/>", {id: "thumbnails"});
+	var $items = $("<div/>", {id: "items"});
 
 	/* Image */
-	var $imageContainer = $("<div/>").attr("id", "imageContainer");
+	var $imageContainer = $("<div/>", {id: "imageContainer"});
 	var $image = $("<img/>");
 
 	/* Buttons */
-	var $closeButton = $("<a/>").addClass("closeButton");
-	var $previousButton = $("<a/>").addClass("previousButton");
-	var $nextButton = $("<a/>").addClass("nextButton");
+	var $closeButton = $("<a/>", {class: "closeButton"});
+	var $previousButton = $("<a/>", {class: "previousButton"});
+	var $nextButton = $("<a/>", {class: "nextButton"});
 
 	var settings = {
 		closeDuration: "fast",
@@ -37,9 +37,9 @@
 	};
 
 	$.slideshow = {
-		version: "0.2.1",
+		version: "0.3",
 
-		initialize: function(){
+		_initialize: function(){
 			$slideshowContainer.prependTo(document.body);
 			$slideshowOverlay.prependTo($slideshowContainer);
 
@@ -72,47 +72,36 @@
 				$thumbnails.stop().animate({scrollLeft: "+=87"});
 			});
 
-			$.slideshow.initializeEvents();
+			$.slideshow._initializeEvents();
 		},
 
-		initializeEvents: function(){
+		_initializeEvents: function(){
 			$closeButton.click($.slideshow.close);
 
 			$(document).keydown(function(event){
-				var selected = $("div#items img.selected");
-
 				if (event.keyCode == '27'){
 					$.slideshow.close();
 				} else if (event.keyCode == '37'){
-					$thumbnails.stop().animate({scrollLeft: "-=87"});
-
-					if (selected.prev("img").length){
-						selected.removeClass("selected").prev("img").addClass("selected").trigger("click");
-					}
+					$.slideshow.prev();
 				} else if (event.keyCode == '39'){
-					$thumbnails.stop().animate({scrollLeft: "+=87"});
-
-					if (selected.next("img").length){
-						selected.removeClass("selected").next("img").addClass("selected").trigger("click");
-					}
+					$.slideshow.next();
 				}
 			});
 
-			$("div#items").delegate("img", "click", function(){
+			$items.delegate("img", "click", function(){
 				var self = $(this);
 
-				$("#items img.selected").removeClass("selected");
+				$("div#items img.selected").removeClass("selected");
 				self.addClass("selected");
 
 				$imageContainer.addClass("loading");
-
 				$image.fadeOut("slow", function(){
 					var resource = new Image();
 					resource.onload = function(){
 						$image.data("meta", {width: this.width, height: this.height});
 						$image.attr("src", this.src);
 
-						$.slideshow.resize();
+						$.slideshow._resize();
 						$imageContainer.removeClass("loading");
 						$image.fadeIn("slow");
 					};
@@ -121,10 +110,19 @@
 				});
 			});
 
-			$(window).resize($.slideshow.resize);
+			$items.bind("fit", function(){
+				this.width = ($(this).find("img").length * (75 + 13)) - 7;
+
+				$(this).css("width", this.width + "px");
+				$(this).find("img:last").css("margin-right", "0px");
+
+				return this;
+			});
+
+			$(window).resize($.slideshow._resize);
 		},
 
-		load: function(element){
+		_load: function(element){
 			var original = $(element).attr("href"), img = $(element).find("img").clone(), src = img.attr("src");
 
 			img.data('original', original);
@@ -136,17 +134,11 @@
 			img.attr("src", src).appendTo($items);
 		},
 
-		adjust: function(){
-			var width = ($items.find("img").length * (75 + 13)) - 7;
-			$items.css("width", width + "px");
-			$items.find("img:last").css("margin-right", "0px");
-		},
-
 		open: function(image){
 			$("html").css("overflow", "hidden");
 
 			// Unfortunately, we need to call this function twice :(
-			$.slideshow.resize();
+			$.slideshow._resize();
 
 			if (image !== "undefined"){
 				$imageContainer.addClass("loading");
@@ -163,7 +155,7 @@
 					$image.attr("src", this.src);
 					$image.css("visibility", "visible");
 					$imageContainer.removeClass("loading");
-					$.slideshow.resize();
+					$.slideshow._resize();
 				};
 
 				resource.src = image;
@@ -173,14 +165,32 @@
 		},
 
 		close: function(){
-			return $slideshowContainer.fadeOut(settings.closeDuration, function(){
+			$slideshowContainer.fadeOut(settings.closeDuration, function(){
 				$image.css("visibility", "hidden");
 				$("html").css("overflow", "auto");
 			});
 		},
 
+		prev: function(){
+			var selected = $("div#items img.selected");
+
+			if (selected.prev().length){
+				$thumbnails.stop().animate({scrollLeft: "-=87"});
+				selected.removeClass("selected").prev().addClass("selected").trigger("click");
+			}
+		},
+
+		next: function(){
+			var selected = $("div#items img.selected");
+
+			if (selected.next().length){
+				$thumbnails.stop().animate({scrollLeft: "+=87"});
+				selected.removeClass("selected").next().addClass("selected").trigger("click");
+			}
+		},
+
 		// Thanks to http://www.ajaxblender.com/howto-resize-image-proportionally-using-javascript.html
-		scaleSize: function(maxW, maxH, currW, currH){
+		_scaleSize: function(maxW, maxH, currW, currH){
 			var ratio = currH / currW;
 
 			if (currH >= maxH){
@@ -194,7 +204,7 @@
 			};
 		},
 
-		resize: function(){
+		_resize: function(){
 			// image meta information
 			var meta = $image.data("meta");
 
@@ -206,7 +216,7 @@
 
 			if (meta !== null){
 				var distance = $thumbnailsContainer.outerHeight() + parseInt($thumbnailsContainer.css("bottom"));
-				var size = $.slideshow.scaleSize(windowSize.width, (windowSize.height - distance), meta.width, meta.height);
+				var size = $.slideshow._scaleSize(windowSize.width, (windowSize.height - distance), meta.width, meta.height);
 				var position = (windowSize.height - size.height - distance) / 2;
 
 				$image.css({
@@ -224,7 +234,7 @@
 		$.extend(settings, options);
 
 		this.each(function(){
-			$.slideshow.load(this);
+			$.slideshow._load(this);
 
 			$(this).click(function(){
 				$.slideshow.open(this.href);
@@ -232,11 +242,11 @@
 			});
 		});
 
-		$.slideshow.adjust();
+		$items.trigger("fit");
 
 		return this;
 	};
 
-	jQuery($.slideshow.initialize);
+	jQuery($.slideshow._initialize);
 
 })(jQuery);
