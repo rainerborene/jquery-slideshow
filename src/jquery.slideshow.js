@@ -1,14 +1,15 @@
 /*
  * jQuery Slideshow Plugin
  *
- * Copyright 2010, Rainer Borene, João Otávio
+ * Authors: Rainer Borene, João Otávio
+ * Copyright 2010, Movida Comunicação, Ltda.
  * Licensed under the MIT License
  *
- * Date: 2010-05-11
+ * Date: 2010-05-13
  */
 (function($){
 
-	var $logo = $("<a/>", {class: "slideshowLogo"});
+	var $logo = $("<a/>", {"class": "slideshowLogo"});
 
 	/* Containers */
 	var $slideshowContainer = $("<div/>", {id: "slideshowContainer"});
@@ -24,9 +25,9 @@
 	var $image = $("<img/>");
 
 	/* Buttons */
-	var $closeButton = $("<a/>", {class: "closeButton"});
-	var $previousButton = $("<a/>", {class: "previousButton"});
-	var $nextButton = $("<a/>", {class: "nextButton"});
+	var $closeButton = $("<a/>", {"class": "closeButton"});
+	var $previousButton = $("<a/>", {"class": "previousButton"});
+	var $nextButton = $("<a/>", {"class": "nextButton"});
 
 	var settings = {
 		closeDuration: "fast",
@@ -37,7 +38,7 @@
 	};
 
 	$.slideshow = {
-		version: "0.3",
+		version: "0.4",
 
 		_initialize: function(){
 			$slideshowContainer.prependTo(document.body);
@@ -111,12 +112,15 @@
 			});
 
 			$items.bind("fit", function(){
-				this.width = ($(this).find("img:visible").length * (75 + 13)) - 7;
+				this.selected = $(this).find(".selected");
+				this.selectedOffset = this.selected.offset().left - this.selected.outerWidth();
 
-
+				this.width = $(this).find(":visible").length * (75 + 13) - 7;
 
 				$(this).css("width", this.width + "px");
-				$(this).find("img:visible:last").css("margin-right", "0px");
+				$(this).find(":visible:last").css("margin-right", "0px");
+
+				$(this).parent().scrollLeft(this.selectedOffset);
 
 				return this;
 			});
@@ -125,20 +129,20 @@
 		},
 
 		_load: function(element){
-			var original = $(element).attr("href"), img = $(element).find("img").clone(), src = img.attr("src");
+			// prevents element from being added two times..
+			if ($(element).data('slideshow.added') == null){
+				var original = $(element).attr("href"), img = $(element).find("img").clone(), src = img.attr("src");
 
-			img.data('original', original);
+				img.data('original', original);
 
-			//console.log(element.rel);
+				if (settings.expressions.src){
+					src = src.replace(settings.expressions.src[0], settings.expressions.src[1]);
+				}
 
-			if (settings.expressions.src){
-				src = src.replace(settings.expressions.src[0], settings.expressions.src[1]);
+				img.attr({rel: element.rel, src: src}).appendTo($items);
+
+				$(element).data('slideshow.added', true);
 			}
-
-			img.attr("src", src).appendTo($items);
-			img.attr("class", element.rel);
-			//console.log(img.parent());
-
 		},
 
 		open: function(image){
@@ -169,6 +173,8 @@
 			}
 
 			$slideshowContainer.css("display", "block");
+
+			$items.trigger("fit");
 		},
 
 		close: function(){
@@ -181,18 +187,18 @@
 		prev: function(){
 			var selected = $("div#items img.selected");
 
-			if (selected.prev(':visible').length){
+			if (selected.prev(":visible").length){
 				$thumbnails.stop().animate({scrollLeft: "-=87"});
-				selected.removeClass("selected").prev(':visible').addClass("selected").trigger("click");
+				selected.removeClass("selected").prev(":visible").addClass("selected").trigger("click");
 			}
 		},
 
 		next: function(){
 			var selected = $("div#items img.selected");
 
-			if (selected.next(':visible').length){
+			if (selected.next(":visible").length){
 				$thumbnails.stop().animate({scrollLeft: "+=87"});
-				selected.removeClass("selected").next(':visible').addClass("selected").trigger("click");
+				selected.removeClass("selected").next(":visible").addClass("selected").trigger("click");
 			}
 		},
 
@@ -244,10 +250,10 @@
 			$.slideshow._load(this);
 
 			$(this).click(function(){
-				$items.find('img').hide();
-				$items.find('img.'+this.rel).show();
+				$items.find("img").hide();
+				$items.find("img[rel=" + this.rel + "]").show();
 				$.slideshow.open(this.href);
-				$items.trigger("fit");
+
 				return false;
 			});
 		});
