@@ -8,7 +8,7 @@
 		* { margin:0px; padding:0px; border: none; }
 
 		body { font-family: 'Helvetica Neue', Helvetica, arial, sans-serif; background: url(noise.jpg) repeat left top; color:#fff; }
-		h1,h2 { margin:0px; font-weight:normal; font-size:26px; color:#fff; text-shadow:0px 2px 1px #000; margin-bottom:20px; }
+		h2 { margin:10px 0px; font-weight:bold; font-size:26px; color:#fff; text-shadow:0px 2px 1px #000; margin-bottom:20px; }
 
 		div#container { padding:25px; }
 
@@ -23,32 +23,38 @@
 		$(document).ready(function(){
 			$.getJSON("http://api.flickr.com/services/feeds/groups_pool.gne?id=35034344814@N01&lang=en-us&format=json&jsoncallback=?", function(data){
 				$.each(data.items, function(i,item){
-					$("<img/>").attr("src", item.media.m.replace(/_m/i, "_s")).appendTo(".images:eq(0)").wrap("<a rel=\"01\" class=\"slideshow\" href='" + item.media.m.replace(/_m/i, "") + "'></a>");
+					$("<img/>")
+						.attr("src", item.media.m.replace(/_m/i, "_s"))
+						.appendTo("div.images:first")
+						.wrap("<a rel=\"slideshow[dogs]\" class=\"slideshow\" href='" + item.media.m.replace(/_m/i, "") + "'></a>");
 				});
 
-				$("a[rel=01]").slideshow();
+				$("a.slideshow").slideshow();
 			});
-			
+
 			$.getJSON("http://api.flickr.com/services/feeds/groups_pool.gne?id=618157@N23&lang=en-us&format=json&jsoncallback=?", function(data){
 				$.each(data.items, function(i,item){
-					$("<img/>").attr("src", item.media.m.replace(/_m/i, "_s")).appendTo(".images:eq(1)").wrap("<a rel=\"02\" class=\"slideshow\" href='" + item.media.m.replace(/_m/i, "") + "'></a>");
+					$("<img/>")
+						.attr("src", item.media.m.replace(/_m/i, "_s"))
+						.appendTo("div.images:last")
+						.wrap("<a rel=\"slideshow[cats]\" class=\"slideshow\" href='" + item.media.m.replace(/_m/i, "") + "'></a>");
 				});
-
-				$("a[rel=02]").slideshow();
+				
+				$("a.slideshow").slideshow();
 			});
 		});
 	</script>
 </head>
 <body>
 	<div id="container">
-		<h1><img src="../images/logo.png" border="0" /></h1>
-		
-		<h2>Gallery 'Dogs'</h2>
+		<h1><img src="../images/logo.png" width="413" height="41" alt="jQuery Slideshow Plugin" border="0" /></h1>
+
+		<h2>Dogs</h2>
 		<div class="images"></div>
-		
-		<br /><br /><br /><br /><br /><br />
-		
-		<h2>Gallery 'Cats'</h2>
+
+		<div style="clear:both"></div>
+
+		<h2>Cats</h2>
 		<div class="images"></div>
 	</div>
 </body>
