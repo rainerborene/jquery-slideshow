@@ -5,7 +5,7 @@
  * Copyright 2010, Movida Comunicação, Ltda.
  * Licensed under the MIT License
  *
- * Date: 2010-05-13
+ * Date: 2010-05-18
  */
 (function($){
 
@@ -37,7 +37,7 @@
 	};
 
 	$.slideshow = {
-		version: "0.4",
+		version: "0.5",
 
 		_initialize: function(){
 			$slideshowContainer.prependTo(document.body);
