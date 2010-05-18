@@ -12,10 +12,12 @@
 
 		div#container { padding:25px; }
 
-		.images a { display:block; width:75px; height:75px; border:3px solid #262626; margin-right:10px; margin-bottom:10px; float:left; }
-		.images a:hover { border-color:#fff; }
-		.images a:last-child { margin-right:0px; }
-		.images a img { display:block; }
+		.media a { display:block; width:75px; height:75px; border:3px solid #262626; margin-right:10px; margin-bottom:10px; float:left; }
+		.media a:hover { border-color:#fff; }
+		.media a:last-child { margin-right:0px; }
+		.media a img { display:block; }
+		
+		.type { color:#1c1d1e; text-shadow:0px 1px 0px rgba(255, 255, 255, 0.2); }
 	</style>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 	<script src="../src/jquery.slideshow.js"></script>
@@ -25,7 +27,7 @@
 				$.each(data.items, function(i,item){
 					$("<img/>")
 						.attr("src", item.media.m.replace(/_m/i, "_s"))
-						.appendTo("div.images:first")
+						.appendTo("div.media:first")
 						.wrap("<a rel=\"slideshow[dogs]\" class=\"slideshow\" href='" + item.media.m.replace(/_m/i, "") + "'></a>");
 				});
 
@@ -36,26 +38,42 @@
 				$.each(data.items, function(i,item){
 					$("<img/>")
 						.attr("src", item.media.m.replace(/_m/i, "_s"))
-						.appendTo("div.images:last")
+						.appendTo("div.media:eq(1)")
 						.wrap("<a rel=\"slideshow[cats]\" class=\"slideshow\" href='" + item.media.m.replace(/_m/i, "") + "'></a>");
 				});
 				
 				$("a.slideshow").slideshow();
+			});
+
+			$.getJSON("http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20flickr.photos.search(20)%20where%20tags%20%3D%20'dogs%2C%20cats'%20and%20media%20%3D%20'video'%20and%20extras%20%3D%20'url_sq%2C%20media'&format=json&diagnostics=true", function(data){
+				$.each(data.query.results.photo, function(i,item){
+					$("<img/>")
+						.attr("src", item.url_sq)
+						.appendTo("div.media:last")
+						.wrap("<a rel=\"slideshow[videos]\" class=\"slideshow\" href='#video=yes&url=http://www.flickr.com/apps/video/stewart.swf?v=1.161&photo_id=" + item.id + "'></a>");
+
+					$("a.slideshow").slideshow();
+				});
 			});
 		});
 	</script>
 </head>
 <body>
 	<div id="container">
-		<h1><img src="../images/logo.png" width="413" height="41" alt="jQuery Slideshow Plugin" border="0" /></h1>
+		<h1><img src="../images/logo.png" width="413" height="41" alt="jQuery Slideshow Plugin" border="0"/></h1>
 
-		<h2>Dogs</h2>
-		<div class="images"></div>
+		<h2><span class="type">Photos</span> Dogs</h2>
+		<div class="media"></div>
 
 		<div style="clear:both"></div>
 
-		<h2>Cats</h2>
-		<div class="images"></div>
+		<h2><span class="type">Photos</span> Cats</h2>
+		<div class="media"></div>
+
+		<div style="clear:both"></div>
+
+		<h2><span class="type">Videos</span> Cats &amp; Dogs</h2>
+		<div class="media"></div>
 	</div>
 </body>
 </html>
