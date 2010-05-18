@@ -30,7 +30,7 @@ img {
 	z-index:11;
 }
 
-#imageContainer {
+#mediaContainer {
 	position:absolute;
 	width:100%;
 	height:100%;
@@ -39,8 +39,11 @@ img {
 	-moz-user-select: -moz-none;
 }
 
-#imageContainer img {
+#mediaContainer object, #mediaContainer img {
 	position:relative;
+}
+
+#mediaContainer img {
 	visibility:hidden;
 }
 

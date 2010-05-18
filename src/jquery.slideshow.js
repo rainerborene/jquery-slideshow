@@ -21,7 +21,7 @@
 	var $items = $("<div/>", {id: "items"});
 
 	/* Image */
-	var $imageContainer = $("<div/>", {id: "imageContainer"});
+	var $mediaContainer = $("<div/>", {id: "mediaContainer"});
 	var $image = $("<img/>");
 
 	/* Buttons */
@@ -31,9 +31,8 @@
 
 	var settings = {
 		closeDuration: "fast",
-		expressions: {
-			src: [/_t\.jpg$/, "_s.jpg"],
-			selected: [/_[A-Za-z]+\./, '.']
+		helpers: {
+			src: [/_t\.jpg$/, "_s.jpg"]
 		}
 	};
 
@@ -48,8 +47,8 @@
 			$thumbnails.appendTo($thumbnailsContainer);
 			$items.appendTo($thumbnails);
 
-			$imageContainer.insertBefore($thumbnailsContainer);
-			$image.appendTo($imageContainer);
+			$mediaContainer.insertBefore($thumbnailsContainer);
+			$image.appendTo($mediaContainer);
 
 			$closeButton.prependTo($slideshowContainer);
 			$previousButton.prependTo($thumbnailsContainer);
@@ -90,86 +89,136 @@
 			});
 
 			$items.delegate("img", "click", function(){
-				var self = $(this);
+				var self = $(this), video = jQuery.slideshow._getVideoParams(self.data('original'));
 
 				$("div#items img.selected").removeClass("selected");
 				self.addClass("selected");
 
-				$imageContainer.addClass("loading");
-				$image.fadeOut("slow", function(){
-					var resource = new Image();
-					resource.onload = function(){
-						$image.data("meta", {width: this.width, height: this.height});
-						$image.attr("src", this.src);
+				$mediaContainer.find("object").remove();
 
-						$.slideshow._resize();
-						$imageContainer.removeClass("loading");
-						$image.fadeIn("slow");
-					};
+				if (video){
+					var $video = jQuery.slideshow._createEmbed(video.url, video.vars);
 
-					resource.src = self.data('original');
-				});
+					$image.css("display", "none");
+					$video.appendTo($mediaContainer);
+
+					jQuery.slideshow._resize();
+				} else {
+					$mediaContainer.addClass("loading");
+					$image.fadeOut("slow", function(){
+						var resource = new Image();
+						resource.onload = function(){
+							$image.data("meta", {width: this.width, height: this.height});
+							$image.attr("src", this.src);
+	
+							$.slideshow._resize();
+							$mediaContainer.removeClass("loading");
+							$image.fadeIn("slow");
+						};
+	
+						resource.src = self.data('original');
+					});
+				}
 			});
 
-			$items.bind("fit", function(){
+			$items.bind("fit", function(event){
 				this.selected = $(this).find(".selected");
-				this.selectedOffset = this.selected.offset().left - this.selected.outerWidth();
-
+				this.selectedOffset = (this.selected.length) ? this.selected.offset().left - this.selected.outerWidth() : 0;
 				this.width = $(this).find(":visible").length * (75 + 13) - 7;
 
 				$(this).css("width", this.width + "px");
 				$(this).find(":visible:last").css("margin-right", "0px");
-
 				$(this).parent().scrollLeft(this.selectedOffset);
 
 				return this;
 			});
 
-			$(window).resize($.slideshow._resize);
+			$items.bind("selecting", function(event, media, thumb){
+				$(this).find("img.selected").removeClass("selected");
+				$(this).find("img").filter(function(){
+					if ($(this).data("original") == media || $(this).attr("src") == thumb){
+						return this;
+					}
+				}).addClass("selected");
+
+				return this;
+			});
+
+			$(window).resize(jQuery.slideshow._resize);
+		},
+
+		_createEmbed: function(url, vars){
+			return $('<object width="640" height="385" type="application/x-shockwave-flash" data="' + url + '">' + 
+						(vars !== null ? '<param name="flashvars" value="' + vars + '"/>' : null) +
+						'<param name="movie" value="' + url + '"/>' +
+						'<param name="allowFullScreen" value="true"/>' +
+						'<param name="allowscriptaccess" value="always"/>' +
+						'<param name="bgcolor" value="000000"/>' + 
+						'<param name="wmode" value="transparency"/>' + 
+						'<embed src="' + url + '" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" ' +
+						'flashvars="' + vars + '" wmode="transparency" bgcolor="000000" width="640" height="385"/>' +
+					'</object>');
 		},
 
 		_load: function(element){
-			// prevents element from being added two times..
-			if ($(element).data('slideshow.added') == null){
-				var original = $(element).attr("href"), img = $(element).find("img").clone(), src = img.attr("src");
+			var original = $(element).attr("href"), img = $(element).find("img").clone(), src = img.attr("src");
 
-				img.data('original', original);
+			if (settings.helpers.src){
+				src = src.replace(settings.helpers.src[0], settings.helpers.src[1]);
+			}
 
-				if (settings.expressions.src){
-					src = src.replace(settings.expressions.src[0], settings.expressions.src[1]);
-				}
+			img.data("original", original).attr({rel: element.rel, src: src}).appendTo($items);
+		},
 
-				img.attr({rel: element.rel, src: src}).appendTo($items);
+		_getVideoParams: function(url){
+			var newUrl, newVars;
 
-				$(element).data('slideshow.added', true);
+			if (url.match("video=yes")){
+				newUrl = url.match(/url=([^&]+)/);
+				newVars = url.replace(/url=[^&]+/g, "").replace("video=yes", "");
+
+				return {
+					url: newUrl[1],
+					vars: newVars
+				}				
 			}
 		},
 
-		open: function(image){
-			$("html").css("overflow", "hidden");
+		open: function(media, thumb){
+			var video = this._getVideoParams(media);
+
+			$("html").css("overflow", "hidden").scrollTop(0);
+
+			$mediaContainer.find("object").remove();
+
+			if (video){
+				var $video = this._createEmbed(video.url, video.vars);
+
+				$items.trigger("selecting", [media, thumb]);
+				$image.css("display", "none");
+				$video.appendTo($mediaContainer);
+
+				// must undefine media variable, because we won't use it anymore.
+				media = null;
+			}
 
 			// Unfortunately, we need to call this function twice :(
 			$.slideshow._resize();
 
-			if (image !== "undefined"){
-				$imageContainer.addClass("loading");
-				$items.find("img.selected").removeClass("selected");
-				$items.find("img").filter(function(){
-					if (this.src.replace(settings.expressions.selected[0], settings.expressions.selected[1]) === image){
-						return this;
-					}
-				}).addClass("selected");
+			if (typeof media !== "undefined" && media !== null){
+				$mediaContainer.addClass("loading");
+				$items.trigger("selecting", [media, thumb]);
 
 				var resource = new Image();
 				resource.onload = function(){
 					$image.data("meta", {width: this.width, height: this.height});
 					$image.attr("src", this.src);
-					$image.css("visibility", "visible");
-					$imageContainer.removeClass("loading");
+					$image.css({display: "inline-block", visibility: "visible"});
+					$mediaContainer.removeClass("loading");
 					$.slideshow._resize();
 				};
 
-				resource.src = image;
+				resource.src = media;
 			}
 
 			$slideshowContainer.css("display", "block");
@@ -219,7 +268,7 @@
 
 		_resize: function(){
 			// image meta information
-			var meta = $image.data("meta");
+			var meta = $image.data("meta"), $video = $mediaContainer.find("object");
 
 			// window size object
 			var windowSize = {
@@ -227,8 +276,10 @@
 				height: $(window).height()
 			};
 
-			if (meta !== null){
-				var distance = $thumbnailsContainer.outerHeight() + parseInt($thumbnailsContainer.css("bottom"));
+			var distance = $thumbnailsContainer.outerHeight() + parseInt($thumbnailsContainer.css("bottom"));
+
+			// positioning for images
+			if (meta !== null && !$video.length){
 				var size = $.slideshow._scaleSize(windowSize.width, (windowSize.height - distance), meta.width, meta.height);
 				var position = (windowSize.height - size.height - distance) / 2;
 
@@ -239,6 +290,13 @@
 				});
 			}
 
+			// positioning for videos
+			if ($video.length){
+				var position = (windowSize.height - parseInt($video.css("height")) - distance) / 2;
+
+				$video.css("top", Math.max(position, 0));
+			}
+
 			$thumbnails.css("width", windowSize.width - 60 - 95);
 		}
 	};
@@ -247,15 +305,22 @@
 		$.extend(settings, options);
 
 		this.each(function(){
-			$.slideshow._load(this);
+			// prevents element from being added two times..
+			if ($(this).data('slideshow.included') == null){
+				$.slideshow._load(this);
 
-			$(this).click(function(){
-				$items.find("img").hide();
-				$items.find("img[rel=" + this.rel + "]").show();
-				$.slideshow.open(this.href);
+				$(this).click(function(){
+					var thumb = $(this).find("img").attr("src");
 
-				return false;
-			});
+					$items.find("img").hide();
+					$items.find("img[rel=" + this.rel + "]").show();
+					$.slideshow.open(this.href, thumb);
+
+					return false;
+				});
+
+				$(this).data('slideshow.included', true);
+			}
 		});
 
 		return this;
