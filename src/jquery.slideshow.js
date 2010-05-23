@@ -5,7 +5,7 @@
  * Copyright 2010, Movida Comunicação, Ltda.
  * Licensed under the MIT License
  *
- * Date: 2010-05-18
+ * Date: 2010-05-23
  */
 (function($){
 
@@ -37,7 +37,7 @@
 	};
 
 	$.slideshow = {
-		version: "0.5",
+		version: "0.5.1",
 
 		_initialize: function(){
 			$slideshowContainer.prependTo(document.body);
@@ -89,7 +89,7 @@
 			});
 
 			$items.delegate("img", "click", function(){
-				var self = $(this), video = jQuery.slideshow._getVideoParams(self.data('original'));
+				var self = $(this), video = $.slideshow._getVideoParams(self.data('original'));
 
 				$("div#items img.selected").removeClass("selected");
 				self.addClass("selected");
@@ -97,12 +97,11 @@
 				$mediaContainer.find("object").remove();
 
 				if (video){
-					var $video = jQuery.slideshow._createEmbed(video.url, video.vars);
+					var $video = $.slideshow._createEmbed(video.url, video.vars);
 
 					$image.css("display", "none");
 					$video.appendTo($mediaContainer);
-
-					jQuery.slideshow._resize();
+					$.slideshow._resize();
 				} else {
 					$mediaContainer.addClass("loading");
 					$image.fadeOut("slow", function(){
@@ -110,7 +109,6 @@
 						resource.onload = function(){
 							$image.data("meta", {width: this.width, height: this.height});
 							$image.attr("src", this.src);
-	
 							$.slideshow._resize();
 							$mediaContainer.removeClass("loading");
 							$image.fadeIn("slow");
@@ -144,7 +142,7 @@
 				return this;
 			});
 
-			$(window).resize(jQuery.slideshow._resize);
+			$(window).resize($.slideshow._resize);
 		},
 
 		_createEmbed: function(url, vars){
@@ -154,9 +152,9 @@
 						'<param name="allowFullScreen" value="true"/>' +
 						'<param name="allowscriptaccess" value="always"/>' +
 						'<param name="bgcolor" value="000000"/>' + 
-						'<param name="wmode" value="transparency"/>' + 
+						'<param name="wmode" value="transparent"/>' + 
 						'<embed src="' + url + '" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" ' +
-						'flashvars="' + vars + '" wmode="transparency" bgcolor="000000" width="640" height="385"/>' +
+						'flashvars="' + vars + '" wmode="transparent" bgcolor="000000" width="640" height="385"/>' +
 					'</object>');
 		},
 
@@ -187,7 +185,8 @@
 		open: function(media, thumb){
 			var video = this._getVideoParams(media);
 
-			$("html").css("overflow", "hidden").scrollTop(0);
+			$("html").css("overflow", "hidden");
+			$(window).scrollTop(0);
 
 			$mediaContainer.find("object").remove();
 
