@@ -20,7 +20,7 @@ It's easy as pie. Just call the `slideshow` function, and be sure you're calling
 		$("a.slideshow").slideshow();
 	});
 
-**Attention:** The usage of the `rel` attribute on links is **obrigatory** when using different groups of images.
+**Attention:** The usage of the `rel` attribute on links is **obligatory** when using different groups of images.
 
 License
 -------
