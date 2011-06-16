@@ -1,67 +1,71 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	<title>jQuery Slideshow Plugin</title>
-	<link rel="stylesheet" type="text/css" href="http://github.com/rainerborene/jquery-slideshow/raw/master/src/jquery.slideshow.css" media="screen"/>
-	<style type="text/css">
-	    html, body {margin:0px; padding:0px;}
-		body {background: #272728 url(http://github.com/rainerborene/jquery-slideshow/raw/master/demo/noise.jpg) repeat; font-family: 'Helvetica Neue', Helvetica, arial, sans-serif; color: #ffffff; }
-        #container {margin: 0px auto; width: 700px; padding-top:30px;}
-		h1 {font-size: 3.8em; color: #a3a3a3; margin-bottom: 3px; margin-top:25px; float:left;}
-		h1 a {display:block; text-decoration: none; width:413px; height:41px; background:url(http://github.com/rainerborene/jquery-slideshow/raw/master/images/logo.png) no-repeat left top; text-indent:-9999px; overflow:hidden;}
-		h2 {font-weight:bold; font-size:26px; color:#fff; text-shadow:0px 2px 1px #000;}
-        h3 {text-align: center; color: #a3a3a3;}
-        ul {margin:0px; padding:0px; list-style-position:inside;}
-        p, li {line-height:24px;}
-        a {color: #CCC;}
-        .description {font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-        .download {float: right;}
-		pre {background: #000; color: #fff; padding: 15px;}
-        hr {border: 0; width: 80%; border-bottom: 1px solid #aaa}
-        .footer {text-align:center; padding:30px 0px; font-style: italic;}
-		.media a { display:inline-block; width:75px; height:75px; border:3px solid #262626; margin-right:10px; margin-bottom:10px; }
-		.media a:hover { border-color:#fff; }
-		.media a:last-child { margin-right:0px; }
-		.media a img { display:block; border:none;}
-		.closeButton { background-image: url(http://github.com/rainerborene/jquery-slideshow/raw/master/images/close01.png) !important; }
-		.nextButton { background-image: url(http://github.com/rainerborene/jquery-slideshow/raw/master/images/arrow_right.png) !important; }
-		.previousButton { background-image: url(http://github.com/rainerborene/jquery-slideshow/raw/master/images/arrow_left.png) !important; }
-		.loading { background-image: url(http://github.com/rainerborene/jquery-slideshow/raw/master/images/spinner.gif) !important; }
-		.slideshowLogo { background-image: url(http://github.com/rainerborene/jquery-slideshow/raw/master/images/logo.png) !important; }
-	</style>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>jQuery Slideshow Plugin</title>
+  <link rel="stylesheet" type="text/css" href="https://raw.github.com/rainerborene/jquery-slideshow/master/src/jquery.slideshow.css" media="screen"/>
+  <style type="text/css">
+    html, body {margin:0px; padding:0px;}
+    body {background: #272728 url(https://raw.github.com/rainerborene/jquery-slideshow/master/demo/noise.jpg) repeat; font-family: 'Helvetica Neue', Helvetica, arial, sans-serif; color: #ffffff; }
+    #container {margin: 0px auto; width: 700px; padding-top:30px;}
+    h1 {font-size: 3.8em; color: #a3a3a3; margin-bottom: 3px; margin-top:25px; float:left;}
+    h1 a {display:block; text-decoration: none; width:413px; height:41px; background:url(https://raw.github.com/rainerborene/jquery-slideshow/master/images/logo.png) no-repeat left top; text-indent:-9999px; overflow:hidden;}
+    h2 {font-weight:bold; font-size:26px; color:#fff; text-shadow:0px 2px 1px #000;}
+    h3 {text-align: center; color: #a3a3a3;}
+    ul {margin:0px; padding:0px; list-style-position:inside;}
+    p, li {line-height:24px;}
+    a {color: #CCC;}
+    .description {font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
+    .download {float: right;}
+    pre {background: #000; color: #fff; padding: 15px;}
+    hr {border: 0; width: 80%; border-bottom: 1px solid #aaa}
+    .footer {text-align:center; padding:30px 0px; font-style: italic;}
+    .media a { display:inline-block; width:75px; height:75px; border:3px solid #262626; margin-right:10px; margin-bottom:10px; }
+    .media a:hover { border-color:#fff; }
+    .media a:last-child { margin-right:0px; }
+    .media a img { display:block; border:none;}
+    .closeButton { background-image: url(https://raw.github.com/rainerborene/jquery-slideshow/master/images/close01.png) !important; }
+    .nextButton { background-image: url(https://raw.github.com/rainerborene/jquery-slideshow/master/images/arrow_right.png) !important; }
+    .previousButton { background-image: url(https://raw.github.com/rainerborene/jquery-slideshow/master/images/arrow_left.png) !important; }
+    .loading { background-image: url(https://raw.github.com/rainerborene/jquery-slideshow/master/images/spinner.gif) !important; }
+    .slideshowLogo { background-image: url(https://raw.github.com/rainerborene/jquery-slideshow/master/images/logo.png) !important; }
+  </style>
 
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-	<script type="text/javascript" src="http://github.com/rainerborene/jquery-slideshow/raw/master/src/jquery.slideshow.js"></script>
-	<script type="text/javascript">
-	    $(document).ready(function(){
-			$.getJSON("http://api.flickr.com/services/feeds/groups_pool.gne?id=35034344814@N01&lang=en-us&format=json&jsoncallback=?", function(data){
-				$.each(data.items, function(i,item){
-					$("<img/>")
-						.attr("src", item.media.m.replace(/_m/i, "_s"))
-						.appendTo("div.media:first")
-						.wrap("<a rel=\"slideshow[dogs]\" class=\"slideshow\" href='" + item.media.m.replace(/_m/i, "") + "'></a>");
-				});
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+  <script type="text/javascript" src="https://raw.github.com/rainerborene/jquery-slideshow/master/src/jquery.slideshow.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $.getJSON("http://api.flickr.com/services/feeds/groups_pool.gne?id=35034344814@N01&lang=en-us&format=json&jsoncallback=?", function(data){
+        $.each(data.items, function(i,item){
+          $("<img/>")
+            .attr("src", item.media.m.replace(/_m/i, "_s"))
+            .appendTo("div.media:first")
+            .wrap("<a rel=\"slideshow[dogs]\" class=\"slideshow\" href='" + item.media.m.replace(/_m/i, "") + "'></a>");
+        });
 
-				$("a.slideshow").slideshow();
-			});
-	    });
-	</script>
+        $("a.slideshow").slideshow();
+      });
+    });
+  </script>
 </head>
 <body>
-  <a href="http://github.com/rainerborene/jquery-slideshow"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+  <a href="http://github.com/rainerborene/jquery-slideshow">
+    <img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" />
+  </a>
 
   <div id="container">
     <div class="download">
       <a href="http://github.com/rainerborene/jquery-slideshow/zipball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
+        <img border="0" width="90" src="https://github.com/images/modules/download/zip.png">
+      </a>
       <a href="http://github.com/rainerborene/jquery-slideshow/tarball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
+        <img border="0" width="90" src="https://github.com/images/modules/download/tar.png">
+      </a>
     </div>
 
     <h1 id="logo">
-        <a href="http://github.com/rainerborene/jquery-slideshow">jQuery Slideshow</a>
+      <a href="http://github.com/rainerborene/jquery-slideshow">jQuery Slideshow</a>
     </h1>
 
     <div style="clear:both"></div>
@@ -72,14 +76,14 @@
 
     <h2>Dependencies</h2>
     <p>jQuery 1.4.2</p>
-    
+
     <h2>License</h2>
     <p>MIT License</p>
-    
+
     <h2>Authors</h2>
     <ul>
-        <li>Rainer Borene</li>
-        <li>Joao Otávio</li>
+      <li>Rainer Borene</li>
+      <li>Joao Otávio</li>
     </ul>
 
     <h2>Demo</h2>
@@ -93,9 +97,8 @@
     </p>
 
     <p>
-        You can also clone the project with <a href="http://git-scm.com">Git</a>
-        by running:
-        <pre>$ git clone git://github.com/rainerborene/jquery-slideshow</pre>
+      You can also clone the project with <a href="http://git-scm.com">Git</a> by running:
+      <pre>$ git clone git://github.com/rainerborene/jquery-slideshow</pre>
     </p>
 
     <div class="footer">
