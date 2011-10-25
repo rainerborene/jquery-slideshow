@@ -3,7 +3,6 @@
 <head>
   <meta charset="utf-8">
   <title>jQuery Slideshow Plugin</title>
-  <link rel="stylesheet" href="https://raw.github.com/rainerborene/jquery-slideshow/master/src/jquery.slideshow.css" media="all">
   <style type="text/css">
     html, body {margin:0px; padding:0px;}
     body {background: #272728 url(https://raw.github.com/rainerborene/jquery-slideshow/master/demo/noise.jpg) repeat; font-family: 'Helvetica Neue', Helvetica, arial, sans-serif; color: #ffffff; }
@@ -27,8 +26,27 @@
     .closeButton { background-image: url(https://raw.github.com/rainerborene/jquery-slideshow/master/images/close01.png) !important; }
     .nextButton { background-image: url(https://raw.github.com/rainerborene/jquery-slideshow/master/images/arrow_right.png) !important; }
     .previousButton { background-image: url(https://raw.github.com/rainerborene/jquery-slideshow/master/images/arrow_left.png) !important; }
-    .loading { background-image: url(https://raw.github.com/rainerborene/jquery-slideshow/master/images/spinner.gif) !important; }
+    .loading { background: url(https://raw.github.com/rainerborene/jquery-slideshow/master/images/spinner.gif) no-repeat center center !important; }
     .slideshowLogo { background-image: url(https://raw.github.com/rainerborene/jquery-slideshow/master/images/logo.png) !important; }
+  </style>
+  <style type="text/css">
+    html,body{width:100%;height:100%}
+    img{-ms-interpolation-mode:bicubic;image-rendering:optimizeQuality}
+    #slideshowContainer{display:none;width:100%;height:100%;position:absolute;z-index:10}
+    #slideshowOverlay{position:absolute;width:100%;height:100%;background:#000;z-index:11}
+    #mediaContainer{position:absolute;width:100%;height:100%;text-align:center;z-index:12;-moz-user-select:-moz-none}
+    #mediaContainer object,#mediaContainer img{position:relative}
+    #mediaContainer img{visibility:hidden}
+    #thumbnailsContainer{position:absolute;bottom:20px;height:101px;margin:0 10px;z-index:12}
+    #thumbnails{overflow:hidden;background:#000;background:rgba(0,0,0,0.5);padding:10px;width:500px;float:left;-moz-border-radius:5px;-webkit-border-radius:5px}
+    #thumbnails #items{width:20000em;-moz-user-select:-moz-none}
+    #thumbnails #items img{display:block;width:75px;height:75px;cursor:pointer;margin-right:7px;border:3px solid #3b3b3b;float:left}
+    #thumbnails #items img.selected{border-color:#fff}
+    .closeButton{position:absolute;border:none;cursor:pointer;width:48px;height:48px;top:20px;right:20px;z-index:13;outline:0}
+    .nextButton{margin-right:0;float:left}
+    .previousButton{margin-left:0;float:left}
+    .nextButton,.previousButton{cursor:pointer;width:36px;height:50px;margin:24px 10px 0 10px;outline:0}
+    .slideshowLogo{position:absolute;width:413px;height:41px;left:20px;top:25px;z-index:14}
   </style>
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
   <script type="text/javascript" src="https://raw.github.com/rainerborene/jquery-slideshow/master/src/jquery.slideshow.js"></script>
