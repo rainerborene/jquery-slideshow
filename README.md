@@ -1,12 +1,12 @@
 jQuery Slideshow Plugin
 =======================
 
-This is a plugin for jQuery that enables you to create a flickr-like slideshow on your website. Tested under IE6+, Firefox, Safari and Google Chrome.
+This is a jQuery plugin that allows you to create a photo gallery ala Flickr. Tested under IE6+, Firefox, Safari and Google Chrome.
 
 Installation
 ------------
 
-Include the appropriate scripts in the **head** of your HTML document.
+Include the appropriate scripts in the head of your page.
 
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 	<script type="text/javascript" src="jquery.slideshow.js"></script>
@@ -14,13 +14,13 @@ Include the appropriate scripts in the **head** of your HTML document.
 Usage
 -----
 
-It's easy as pie. Just call the `slideshow` function, and be sure you're calling it from a *DOM ready* callback scope.
+It's easy as pie. Just call the `slideshow` function, and be sure you're calling it from a DOM ready scope.
 
 	$(document).ready(function(){
 		$("a.slideshow").slideshow();
 	});
 
-**Attention:** The usage of the `rel` attribute on links is **obligatory** when using different groups of images.
+**Attention:** The usage of the `rel` attribute on links is obligatory when using different groups of images.
 
 License
 -------
